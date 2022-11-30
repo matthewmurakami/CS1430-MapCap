@@ -45,25 +45,9 @@ for cl, images in image_dict.items():
         updated_path = os.path.join(newpath, label, image)
         os.rename(old_path, updated_path)
 
-'''
-for img, name in classDict.items():
-    newpath = (os.path.join(classDict, name))
-
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
-
-    if os.path.exists(os.path.join(classDict, img)):
-        os.rename(os.path.join(classDict, img), os.path.join(newpath, img))
-'''
-
-            
-
-    
 
 
-
-
-def setup(directory):
+"""def setup(directory):
 
     imgDir = os.path.join(directory, 'train')
 
@@ -83,4 +67,4 @@ def setup(directory):
         if not os.path.exists(newpath):
             os.makedirs(newpath)
         if os.path.exists(os.path.join(imgDir, img)):
-            os.rename(os.path.join(imgDir, img), os.path.join(newpath, img))
+            os.rename(os.path.join(imgDir, img), os.path.join(newpath, img))"""
