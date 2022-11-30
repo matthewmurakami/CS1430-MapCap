@@ -8,3 +8,8 @@ unzip -qq 'tiny-imagenet-200.zip'
 mv tiny-imagenet-200 data
 rm -rf tiny-imagenet-200.zip
 ```
+
+Then run the following in the code folder to proccess the data. (Only needs to be run once).
+```bash
+python main.py --setup
+```
