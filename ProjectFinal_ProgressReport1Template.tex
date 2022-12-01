@@ -74,31 +74,51 @@
 \vspace{-1cm}
 \thispagestyle{fancy}
 
-\emph{Please make this document anonymous.}
-
-\textbf{Team name: \emph{HERE PLEASE}}\\
-\textbf{TA name: \emph{HERE PLEASE}}
+\textbf{Team name: \emph{MapCap}}\\
+\textbf{TA name: \emph{Srinath Sridhar}}
 
 \emph{Note:} when submitting this document to Gradescope, make sure to add all other team members to the submission. This can be done on the submission page after uploading.
 
-\section*{Progress Report Instructions}
+\section*{Progress Report}
 
-Before writing your progress report, you should have met with your TA and talked through your progress.
+\paragraph{Restate the goal of the project succinctly.}
+The goal of our project is to analyze CLIP and use CLIPCap and GPT2 to generate captions. This is so that we are able to understand why a model classifies something the way it does by making saliency maps more interpretable through the use of vision and language models. The language model will be used to describe what occurs in a given saliency map where we will then summarize all of the descriptions such that a human will be able to quickly understand it. Afterward, we will analyze trends between classification performance and properties of the patch caption summaries. 
 
-% Feel free to use the following questions as a guideline for writing this report:
-%
-% Restate the goal of the project succinctly.
-% 
-% What has the team collectively accomplished?
-%
-% What individual tasks have been accomplished?
-% 
-% What are the current tasks?
-%
-% What tasks remain undefined?
-%
-% What are the next steps?
-%
-% Are you missing resources? Data, compute, skills?
+\paragraph{What has the team collectively accomplished?}
+So far, our team has collectively made significant progress towards our goal as we were able to 
+get access to our required data by taking a partition of Tiny ImageNet so that we could more easily run our pre-trained model on a smaller sample size. Furthermore, we implemented the Vision Transformer (vit) model such that we received a high zero-shot accuracy when we run inference on a given image. As a result, we also were able to create a saliency map that highlights pixels based on how important they are for the model to make a prediction on an image.
+
+
+\paragraph{What individual tasks have been accomplished?}
+In terms of individual tasks that have been accomplished, one team member created a script that will partition Tiny Imagenet while another member ran inference on the data using the vit model. Finally, the last member created and visualized the saliency map for each image. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm]{Saliency.png}
+\end{figure}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lr}
+        \toprule
+        Class & Accuracy\\
+        \midrule
+        Slug & 90\% \\
+        Lawn Mower & 90\% \\
+        Pill Bottle & 90\% \\
+        Goldfish & 90\% \\
+        Birdhouse & 90\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\paragraph{What are the current tasks?}
+Our current task is to improve our saliency map so that the only pixels that are shown are the ones that create the subject of the image. Once that is accomplished our main task is to extract the subject of the image so that we can pass it through the model again to find what parts of the subject the model is looking at to make its predictions.
+
+\paragraph{What tasks remain undefined?}
+
+\paragraph{What are the next steps?}
+
+\paragraph{Are you missing resources? Data, compute, skills?}
 
 \end{document}
