@@ -34,14 +34,12 @@ for cl in classes:
     ims = [transform(Image.open(os.path.join(class_path, im_path)).convert('RGB')).to(device) for im_path in im_paths]
 
     # Run inference for each image
-    for image in ims:
-        
-        print(image.shape)
+    for image_idx in range(len(ims)):
+        image = ims[image_idx]
         inputs = processor(text=classes, images=image, return_tensors="pt", padding=True)
 
         inputs["pixel_values"].requires_grad_(True)
-        outputs = model(**inputs, output_attentions=True, return_dict=True)
-        print(len(outputs["vision_model_output"]["attentions"]))
+        outputs = model(**inputs)
 
         logits_per_image = outputs.logits_per_image  # this is the image-text similarity score
         probs = logits_per_image.softmax(dim=1)  # we can take the softmax to get the label probabilities
@@ -52,6 +50,9 @@ for cl in classes:
         if prediction == class_index:
             class_performance[cl].append(1)
         else:
+            print(cl)
+            print(classes[prediction])
+            print(im_paths[image_idx])
             class_performance[cl].append(0)
 
         ### To Test saliency map calculations
@@ -60,16 +61,17 @@ for cl in classes:
         saliency = saliency/saliency.max()
 
         # Visualize the image and the saliency map
-        #fig, ax = plt.subplots(1, 2)
-        #ax[0].imshow(inputs["pixel_values"][0].cpu().detach().numpy().transpose(1, 2, 0))
-        #ax[0].axis('off')
-        #ax[1].imshow(saliency, cmap='hot')
-        #ax[1].axis('off')
-        #plt.tight_layout()
-        #fig.suptitle('The Image and Its Saliency Map')
-        #plt.show()
-        #break
-    #break
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(inputs["pixel_values"][0].cpu().detach().numpy().transpose(1, 2, 0))
+        ax[0].axis('off')
+        ax[1].imshow(saliency, cmap='hot')
+        ax[1].axis('off')
+        plt.tight_layout()
+        fig.suptitle('The Image and Its Saliency Map')
+        plt.show()
+        quit()
+        break
+    break
 
 acc_df = {}
 df_classes = []

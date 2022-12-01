@@ -82,19 +82,20 @@
 \section*{Progress Report}
 
 \paragraph{Restate the goal of the project succinctly.}
-The goal of our project is to analyze CLIP and use CLIPCap and GPT2 to generate captions. This is so that we are able to understand why a model classifies something the way it does by making saliency maps more interpretable through the use of vision and language models. The language model will be used to describe what occurs in a given saliency map where we will then summarize all of the descriptions such that a human will be able to quickly understand it. Afterward, we will analyze trends between classification performance and properties of the patch caption summaries. 
+The goal of our project is to augment attribution methods for CLIP zero-shot image classification using CLIPCap. This is so that we are able to understand why a model classifies something the way it does by making attribution maps more interpretable through the use language models. The language model will be used to describe the regions of images that an attribution method highlights across an entire class. We will then summarize all of the descriptions such that a human will be able to quickly understand how CLIP is making its decisions. Afterward, we will analyze trends between classification performance and properties of the patch caption summaries. 
 
 \paragraph{What has the team collectively accomplished?}
-So far, our team has collectively made significant progress towards our goal as we were able to 
-get access to our required data by taking a partition of Tiny ImageNet so that we could more easily run our pre-trained model on a smaller sample size. Furthermore, we implemented the Vision Transformer (vit) model such that we received a high zero-shot accuracy when we run inference on a given image. As a result, we also were able to create a saliency map that highlights pixels based on how important they are for the model to make a prediction on an image.
+So far, our team has collectively made significant progress towards our goal. We were able to get access to our required data by taking a partition of TinyImageNet (5 classes, 10 images per class) so that we could run our pre-trained model on a smaller sample size. Additionally, we ran inference over CLIP for zero-shot image classification over this partition (See Table\ref{perfTable}). We experimented with gradient-based saliency maps and found that ViT feature extraction renders them difficult to interpret (See Figure \ref{saliency}). From there, we explored more advanced attribution methods, settling on an attention-based attribution method presented in \textit{Generic Attention-model Explainability for Interpreting Bi-Modal and Encoder-Decoder Transformers}. We then ran this method on two images that were misclassified in the zero shot setting (see Figure \ref{Map}). Finally, we ran CLIPCap on these same two images, as well as a third image that was correctly classified (See Figure \ref{Cap}) Both the CLIPCap and the Attention explainability method papers provide Google Colaboratory notebooks, which we leverage.
 
 
 \paragraph{What individual tasks have been accomplished?}
-In terms of individual tasks that have been accomplished, one team member created a script that will partition Tiny Imagenet while another member ran inference on the data using the vit model. Finally, the last member created and visualized the saliency map for each image. 
+In terms of individual tasks that have been accomplished, one team member created a script that will partition Tiny Imagenet while another member ran inference on the data using the CLIP model. Finally, the last member created and visualized the saliency map for each image and generated initial data using CLIPCap and the attention-based attribution method. 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=10cm]{Saliency.png}
+    \includegraphics[width=10cm]{SlugSaliency.png}
+    \caption{TinyImageNet image of a slug, and it's corresponding gradient based saliency map. Note how the center of every ViT patch is considered salient.}
+    \label{saliency}
 \end{figure}
 
 \begin{table}[h]
@@ -104,21 +105,43 @@ In terms of individual tasks that have been accomplished, one team member create
         Class & Accuracy\\
         \midrule
         Slug & 90\% \\
-        Lawn Mower & 90\% \\
+        Lawn Mower & 100\% \\
         Pill Bottle & 90\% \\
-        Goldfish & 90\% \\
-        Birdhouse & 90\% \\
+        Goldfish & 100\% \\
+        Birdhouse & 100\% \\
         \bottomrule
     \end{tabular}
+    \label{perfTable}
+
 \end{table}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm]{SlugMap.png}
+    \includegraphics[width=10cm]{PillBottleMap.png}
+    \caption{This attention-based attribution method computes an attribution map based on an image and the corresponding text. (Top) Image of a slug that was misclassified as a goldfish. Attribution map generated for both the correct class and the incorrect class. (Bottom) Image corresponding to the label ``Pill Bottle'' that was misclassified as a bird house.}
+    \label{Map}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm]{SlugClipCap.png}
+    \includegraphics[width=10cm]{PillBottleClipCap.png}
+    \includegraphics[width=10cm]{BirdhouseClipCap.png}
+    \caption{CLIPCap captions for three images. (Top) Slug, misclassified as goldfish. (Middle) Pill Bottle, misclassified as birdhouse. (Bottom) Birdhouse, correctly classified.}
+    \label{Cap}
+\end{figure}
+
 \paragraph{What are the current tasks?}
-Our current task is to improve our saliency map so that the only pixels that are shown are the ones that create the subject of the image. Once that is accomplished our main task is to extract the subject of the image so that we can pass it through the model again to find what parts of the subject the model is looking at to make its predictions.
+Our current task is to implement segmentation over the heatmap generated by the attention-based attribution method, generate image representations for each segment, and feed them into CLIPCap.
 
 \paragraph{What tasks remain undefined?}
+We currently do not have a good way to quantify our natural-language explainability method's usefulness.
 
 \paragraph{What are the next steps?}
+After the current task is completed, we must implement unsupervised extractive summarization to create a simple description of the features used by the CLIP. Finally, we must increase our dataset size, and rewrite the CLIPCap and Attention Attribution method Colaboratory notebooks to run over our sequences of images.
 
 \paragraph{Are you missing resources? Data, compute, skills?}
+We have all resources that we need.
 
 \end{document}
