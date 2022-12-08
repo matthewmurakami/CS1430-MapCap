@@ -99,28 +99,29 @@ def segment_heatmap(heatmap):
         mask = mask - (2 * curr_mask) # Get rid of segment you just extracted
 
     return segments
-
-
-def gather_data():
-    # Reads in the Map Cap partition classes
-    transform = torchvision.transforms.Compose([torchvision.transforms.Resize(224), torchvision.transforms.ToTensor()])
-
-    dataset = torchvision.datasets.ImageFolder("../MapCap_partition", transform=transform)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
-    return dataloader
     
 
 if torch.cuda.is_available():
     device = "cuda"
 if torch.backends.mps.is_available():
     device = "mps"
+    # mps is not currently working on mac so just do cpu
+    device = "cpu"
 else:
     device = "cpu"
-device = "cpu"
+
 
 model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
 
-data = gather_data()
+# Reads in the Map Cap partition classes
+transform = torchvision.transforms.Compose([torchvision.transforms.Resize(224), torchvision.transforms.ToTensor()])
+
+dataset = torchvision.datasets.ImageFolder("../MapCap_partition", transform=transform)
+data = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
+
+classes = dataset.find_classes("../MapCap_partition")[0]
+
+
 newpath = "../MapCap_segments"
 if os.path.exists(newpath):
     shutil.rmtree(newpath)
@@ -140,7 +141,7 @@ for image, label in data:
         segnum = 0
         for segment in segments:
             segmented_image = torch.tensor(segment[0]) * image.squeeze(0)
-            classPath = os.path.join(newpath, str(label.item()))
+            classPath = os.path.join(newpath, classes[label.item()])
             if not os.path.exists(classPath):
                 os.makedirs(classPath)
             torchvision.utils.save_image(segmented_image,  os.path.join(classPath, "img%i-seg%i.JPEG"%(imgnum,segnum)))
