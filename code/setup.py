@@ -1,4 +1,5 @@
 import os
+import shutil
 import random
 import numpy as np
 
@@ -24,8 +25,9 @@ for img_class in classes:
     image_dict[img_class] = image
     
 newpath = "../MapCap_partition"
-if not os.path.exists(newpath):
-    os.makedirs(newpath)
+if os.path.exists(newpath):
+    shutil.rmtree(newpath)
+os.makedirs(newpath)
 
 classDict = {}
 with open('../data/words.txt') as file:
