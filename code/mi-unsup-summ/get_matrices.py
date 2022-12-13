@@ -7,25 +7,9 @@ import numpy as np
 import pickle
 import spacy
 import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument("--input_data")
-parser.add_argument("--output_format")
-args = parser.parse_args()
-print(args.input_data)
-print(args.output_format)
 
-data = open(args.input_data, "r").readlines()
 
-nlp = spacy.load("en_core_web_sm")
-
-model = GPT2(device="cpu", location="")
-
-if os.path.exists(args.output_format+".pkl"):
-    output = pickle.load(open(args.output_format+".pkl","rb"))
-else:
-    output = {}
-
-def get_probabilities(articles):
+def get_probabilities(articles, model):
     """
     Given a batch of articles (can be any strings) run a forward pass on GPT2 and obtain word probabilities for the same
     """
@@ -68,7 +52,7 @@ def get_probabilities(articles):
     return res
 
 
-def get_npmi_matrix(sentences, method = 1, batch_size = 1):
+def get_npmi_matrix(sentences, model, method = 1, batch_size = 1):
     """
     Accepts a list of sentences of length n and returns 3 objects:
     - Normalised PMI nxn matrix - temp
@@ -89,7 +73,7 @@ def get_npmi_matrix(sentences, method = 1, batch_size = 1):
     p = []
     for i in range(len(sentences)):
         print(sentences[i])
-        result = get_probabilities([sentences[i].strip()])
+        result = get_probabilities([sentences[i].strip()], model)
         try:
             p.append(sum([math.log(i) for i in result[0]]))
         except:
@@ -110,7 +94,7 @@ def get_npmi_matrix(sentences, method = 1, batch_size = 1):
             
             if batchCount == batchSize or (i == len(sentences)-1 and j == len(sentences)-1):
                 c+=1
-                result = get_probabilities(batch)
+                result = get_probabilities(batch, model)
                 for key in batch_indices.keys():
 
                     idx_i, idx_j, idx_l = [int(idx) for idx in key.split("-")]
@@ -139,11 +123,22 @@ def get_npmi_matrix(sentences, method = 1, batch_size = 1):
 Main iteration loop, creates matrices for each document in the dataset
 """
 
-normalised, vanilla, surprise = get_npmi_matrix(data) 
+def main(input_file_path, out_path, device):
 
-output = {}
-output["vanilla"] = vanilla
-output["normalised"] = normalised
-output["surprise"] = surprise
+    data = open(input_file_path, "r").readlines()
 
-pickle.dump(output, open(args.output_format+".pkl", "wb"))
+    model = GPT2(device=device, location="")
+
+    if os.path.exists(out_path):
+        output = pickle.load(open(out_path,"rb"))
+    else:
+        output = {}
+
+    normalised, vanilla, surprise = get_npmi_matrix(data, model) 
+
+    output = {}
+    output["vanilla"] = vanilla
+    output["normalised"] = normalised
+    output["surprise"] = surprise
+
+    pickle.dump(output, open(out_path, "wb"))
