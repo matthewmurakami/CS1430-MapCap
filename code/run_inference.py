@@ -27,6 +27,7 @@ transform = transforms.Compose([
 
 for cl in classes:
     
+    print(cl)
     class_index = classes.index(cl)
     class_path = os.path.join(data_dir, cl)
     im_paths = os.listdir(class_path)
@@ -38,40 +39,18 @@ for cl in classes:
         image = ims[image_idx]
         inputs = processor(text=classes, images=image, return_tensors="pt", padding=True)
 
-        inputs["pixel_values"].requires_grad_(True)
         outputs = model(**inputs)
 
         logits_per_image = outputs.logits_per_image  # this is the image-text similarity score
         probs = logits_per_image.softmax(dim=1)  # we can take the softmax to get the label probabilities
 
         prediction = probs.argmax()
-        probs[0, prediction].backward()
 
         if prediction == class_index:
             class_performance[cl].append(1)
         else:
-            print(cl)
-            print(classes[prediction])
-            print(im_paths[image_idx])
             class_performance[cl].append(0)
 
-        ### To Test saliency map calculations
-        saliency, _ = torch.max(inputs["pixel_values"].grad.data.abs(), dim=1)  # get the maximum gradient along all 3 channels
-        saliency = saliency.cpu()[0]
-        saliency = saliency/saliency.max()
-
-        # Visualize the image and the saliency map
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(inputs["pixel_values"][0].cpu().detach().numpy().transpose(1, 2, 0))
-        ax[0].axis('off')
-        ax[1].imshow(saliency, cmap='hot')
-        ax[1].axis('off')
-        plt.tight_layout()
-        fig.suptitle('The Image and Its Saliency Map')
-        plt.show()
-        quit()
-        break
-    break
 
 acc_df = {}
 df_classes = []
