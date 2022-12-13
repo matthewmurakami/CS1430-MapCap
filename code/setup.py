@@ -13,15 +13,15 @@ import numpy as np
 #    None
 ###
 
-CLASSES = 5
-IMG_PER_CLASS = 10
+CLASSES = 25
+IMG_PER_CLASS = 100
 
 
-classes = np.random.choice(os.listdir("../data/train"), size=CLASSES, replace=False)
+classes = np.random.choice(os.listdir("../tiny-imagenet-200/train"), size=CLASSES, replace=False)
 
 image_dict = {}
 for img_class in classes:
-    image = np.random.choice(os.listdir("../data/train/%s/images"%(img_class)), size=IMG_PER_CLASS, replace=False)
+    image = np.random.choice(os.listdir("../tiny-imagenet-200/train/%s/images"%(img_class)), size=IMG_PER_CLASS, replace=False)
     image_dict[img_class] = image
     
 newpath = "../MapCap_partition"
@@ -30,7 +30,7 @@ if os.path.exists(newpath):
 os.makedirs(newpath)
 
 classDict = {}
-with open('../data/words.txt') as file:
+with open('../tiny-imagenet-200/words.txt') as file:
     data = file.readlines()
 
     for class_ in classes:
@@ -41,32 +41,8 @@ with open('../data/words.txt') as file:
     
 for cl, images in image_dict.items():
     for image in images:
-        old_path = os.path.join("../data/train/%s/images"%(cl), image)
+        old_path = os.path.join("../tiny-imagenet-200/train/%s/images"%(cl), image)
         label = classDict[cl]
         os.makedirs(os.path.join(newpath,label), exist_ok=True)
         updated_path = os.path.join(newpath, label, image)
         os.rename(old_path, updated_path)
-
-
-
-"""def setup(directory):
-
-    imgDir = os.path.join(directory, 'train')
-
-    # Open and read val annotations text file
-    with open(os.path.join(directory, 'val/val_annotations.txt'), 'r') as filePath:
-        data = filePath.readlines()
-
-        # Creates a dictionary to store img filename and corresponding class name
-        imgDict = {}
-        for line in data:
-            words = line.split('\t')
-            imgDict[words[0]] = words[1]
-
-    # Create subfolders and moves images into their respective folders
-    for img, name in imgDict.items():
-        newpath = (os.path.join(imgDir, name))
-        if not os.path.exists(newpath):
-            os.makedirs(newpath)
-        if os.path.exists(os.path.join(imgDir, img)):
-            os.rename(os.path.join(imgDir, img), os.path.join(newpath, img))"""
