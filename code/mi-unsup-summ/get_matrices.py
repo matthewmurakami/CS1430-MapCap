@@ -52,7 +52,7 @@ def get_probabilities(articles, model):
     return res
 
 
-def get_npmi_matrix(sentences, model, method = 1, batch_size = 1):
+def get_npmi_matrix(sentences, model, method = 1, batch_size = 8):
     """
     Accepts a list of sentences of length n and returns 3 objects:
     - Normalised PMI nxn matrix - temp
