@@ -21,7 +21,7 @@ def main(outfile, data_file, matrix_file):
 
     penalty = [0 for i in range(len(sentences))]
 
-    for j in range(1, 4):
+    for j in range(3, 10):
         selected = []
         summary = ""
         for k in range(j):
