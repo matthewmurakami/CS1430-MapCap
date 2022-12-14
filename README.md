@@ -27,3 +27,5 @@ Then run the following in the code folder to proccess the data. (Only needs to b
 ```bash
 python main.py --setup
 ```
+
+Finally run MapCap.ipynb
