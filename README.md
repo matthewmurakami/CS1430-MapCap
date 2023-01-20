@@ -1,4 +1,4 @@
-# Running MapCap through Colab (Easier)
+# Running MapCap in browser through Colab (main method)
 In order to run MapCap through colab follow the link below (a Gmail account is required) and simply click the play button for each cell.
 ```bash
 https://colab.research.google.com/drive/1bhOMtYTVdcD5NmeyOOW06qHp7z_nsf4Q
